@@ -49,7 +49,8 @@ fi
 cd "$dir"
 
 file "$sdk_dir/$sdk_file"
-tar -Jxf "$sdk_dir/$sdk_file" -C "$sdk_home_dir" --strip=1
+zstd -d "$sdk_dir/$sdk_file" -o "${sdk_file%.zst}.tar"
+tar -xf "${sdk_file%.zst}.tar" -C "$sdk_home_dir" --strip=1
 
 cd "$sdk_home_dir"
 
