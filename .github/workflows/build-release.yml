@@ -149,5 +149,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: "*.apk"
+          tag_name: v0.61.0-1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
