@@ -146,6 +146,7 @@ jobs:
         run: sh compile.sh
 
       - name: Release and Upload Assets
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           files: "*.ipk"
