@@ -29,8 +29,9 @@ test -d "$feeds_dir" || mkdir -p "$feeds_dir"
 
 cd "$sdk_dir"
 
+# Try new naming format first (openwrt-sdk-*), then fall back to old format (*-sdk-*)
 if ! ( wget -q -O - "$sdk_url_path/sha256sums" | \
-	grep -- "$sdk_name" > sha256sums.small 2>/dev/null ) ; then
+	grep -E "openwrt${sdk_name}|\\*${sdk_name}" > sha256sums.small 2>/dev/null ) ; then
 	echo "Can not find ${sdk_name} file in sha256sums."
 	exit 1
 fi
@@ -49,7 +50,22 @@ fi
 cd "$dir"
 
 file "$sdk_dir/$sdk_file"
-tar --zstd -xf "$sdk_dir/$sdk_file" -C "$sdk_home_dir" --strip=1
+
+# Auto-detect compression format and extract accordingly
+case "$sdk_file" in
+	*.tar.zst)
+		tar --zstd -xf "$sdk_dir/$sdk_file" -C "$sdk_home_dir" --strip=1
+		;;
+	*.tar.xz)
+		tar -xJf "$sdk_dir/$sdk_file" -C "$sdk_home_dir" --strip=1
+		;;
+	*.tar.gz|*.tgz)
+		tar -xzf "$sdk_dir/$sdk_file" -C "$sdk_home_dir" --strip=1
+		;;
+	*)
+		tar -xf "$sdk_dir/$sdk_file" -C "$sdk_home_dir" --strip=1
+		;;
+esac
 
 cd "$sdk_home_dir"
 
