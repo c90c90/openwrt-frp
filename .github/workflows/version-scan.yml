@@ -9,7 +9,6 @@ jobs:
   check:
     name: Check Version
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner }} == "kuoruan"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -44,11 +43,11 @@ jobs:
             source_hash="$(curl -sL \
               "https://codeload.github.com/fatedier/frp/tar.gz/v$latest_version" | \
               sha256sum | cut -d' ' -f1)"
-            echo "::set-output name=version::$latest_version"
-            echo "::set-output name=source_hash::$source_hash"
+            echo "version=$latest_version" >> $GITHUB_OUTPUT
+            echo "source_hash=$source_hash" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=version::"
-            echo "::set-output name=source_hash::"
+            echo "version=" >> $GITHUB_OUTPUT
+            echo "source_hash=" >> $GITHUB_OUTPUT
           fi
 
       - name: Commit New Version
